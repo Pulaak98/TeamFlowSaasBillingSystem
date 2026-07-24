@@ -96,3 +96,24 @@ Total =
 Base Price +
 Extra Member Charges +
 Extra Credit Charges
+
+
+## Running the Project
+
+### Database
+
+The PostgreSQL database runs from the project **root directory** using Docker.
+
+```bash
+docker compose up -d
+```
+
+### Backend
+
+at the moment The backend runs from the **backend** directory.(will docker soon)
+
+```bash
+npm run dev
+```
+
+> **Note:** Make sure the PostgreSQL Docker container is running before starting the backend.
