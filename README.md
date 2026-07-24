@@ -49,3 +49,27 @@ Completed:
   - CHECK constraints for status and amount
 - Connected PostgreSQL using Kysely
 - Initialized the database using Docker and `init.sql`
+
+
+## Phase 3
+
+### REST API
+
+- Organization Members
+  - GET /organizations/:organizationId/members
+  - POST /organizations/:organizationId/members
+
+- Credit Usage
+  - POST /organizations/:organizationId/credit-usage
+  - Duplicate reference ID protection
+
+- Billing
+  - GET /organizations/:organizationId/billing/upcoming-invoice
+  - GET /organizations/:organizationId/invoices
+
+### Validation
+
+- Zod request validation
+- Duplicate reference ID prevention
+- Organization existence validation
+- Positive credit amount validation
