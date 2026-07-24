@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:17
+
+    container_name: teamflow-postgres
+
+    restart: always
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: teamflow_billing
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:

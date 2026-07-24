@@ -31,3 +31,21 @@ ReactFrotend --> routes--> controller--> service--> repository--> databese--> re
 
 
 Currently Everything seems clear if issues/qustestions arise i will discuss.
+
+
+## Phase 2 - Database Design 
+
+Completed:
+- Designed the PostgreSQL database schema
+- Created the following tables:
+  - organizations
+  - organization_members
+  - credit_usage
+  - invoices
+- Added foreign key relationships
+- Added database constraints:
+  - UNIQUE (organization_id, reference_id)
+  - UNIQUE (organization_id, billing_period_start, billing_period_end)
+  - CHECK constraints for status and amount
+- Connected PostgreSQL using Kysely
+- Initialized the database using Docker and `init.sql`
