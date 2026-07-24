@@ -1,5 +1,6 @@
 import * as memberRepository from "../repositories/member.repository.js";
 import * as organizationRepository from "../repositories/organization.repository.js";
+import { AppError } from "../utils/AppError.js";
 
 export async function getMembers(organizationId: number) {
   return await memberRepository.getMembersByOrganizationId(organizationId);
@@ -17,7 +18,7 @@ export async function addMember(
     await organizationRepository.findOrganizationById(organizationId);
 
   if (!organization) {
-    throw new Error("Organization not found.");
+    throw new AppError("Organization not found.", 404);
   }
   return await memberRepository.createMember({
     organization_id: organizationId,

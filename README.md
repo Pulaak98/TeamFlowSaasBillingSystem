@@ -73,3 +73,26 @@ Completed:
 - Duplicate reference ID prevention
 - Organization existence validation
 - Positive credit amount validation
+
+
+
+## Phase 4 – Invoice Generation
+
+Implemented invoice generation with a reusable billing calculator.
+
+### Features
+
+- Generate invoices using:
+  - `POST /organizations/:organizationId/invoices/generate`
+- Prevent duplicate invoices for the same billing period
+- Store invoice breakdown as JSONB
+- Shared billing calculation logic between preview and generation
+- Console-based invoice email simulation
+- Proper HTTP error responses using AppError
+
+### Billing Formula
+
+Total =
+Base Price +
+Extra Member Charges +
+Extra Credit Charges

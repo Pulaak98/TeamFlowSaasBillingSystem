@@ -1,84 +1,44 @@
 import * as billingRepository from "../repositories/billing.repository.js";
+import { AppError } from "../utils/AppError.js";
+import { calculateInvoice } from "./billing-calculator.js";
 
-export async function getUpcomingInvoice(
-  organizationId: number,
-) {
-  const organization =
-    await billingRepository.getOrganization(organizationId);
+export async function getUpcomingInvoice(organizationId: number) {
+  const organization = await billingRepository.getOrganization(organizationId);
 
   if (!organization) {
-    throw new Error("Organization not found.");
+    throw new AppError("Organization not found.", 404);
   }
 
   const activeMembers =
-    await billingRepository.countActiveMembers(
-      organizationId,
-    );
+    await billingRepository.countActiveMembers(organizationId);
 
-  const credits =
-    await billingRepository.getCreditUsage(
-      organizationId,
-    );
+  const creditsUsed = await billingRepository.getCreditUsage(organizationId);
 
-  const extraMembers = Math.max(
-    0,
-    activeMembers - organization.included_members,
-  );
-
-  const extraCredits = Math.max(
-    0,
-    credits - organization.included_credits,
-  );
-
-  const extraMemberCost =
-    extraMembers * Number(organization.extra_member_price);
-
-  const extraCreditCost =
-    extraCredits * Number(organization.extra_credit_price);
-
-  const total =
-    Number(organization.base_price) +
-    extraMemberCost +
-    extraCreditCost;
+  const invoice = calculateInvoice(organization, activeMembers, creditsUsed);
 
   return {
     organizationId,
 
-    billingPeriodStart:
-      organization.billing_start_date,
+    billingPeriodStart: organization.billing_start_date,
 
-    activeMembers,
+    activeMembers: invoice.activeMembers,
 
-    includedMembers:
-      organization.included_members,
+    includedMembers: organization.included_members,
 
-    extraMembers,
+    extraMembers: invoice.extraMembers,
 
-    creditsUsed: credits,
+    creditsUsed: invoice.creditsUsed,
 
-    includedCredits:
-      organization.included_credits,
+    includedCredits: organization.included_credits,
 
-    extraCredits,
+    extraCredits: invoice.extraCredits,
 
-    breakdown: {
-      basePrice: Number(
-        organization.base_price,
-      ),
+    breakdown: invoice.breakdown,
 
-      extraMemberCost,
-
-      extraCreditCost,
-    },
-
-    totalAmount: total,
+    totalAmount: invoice.totalAmount,
   };
 }
 
-export async function getInvoices(
-  organizationId: number,
-) {
-  return billingRepository.getInvoices(
-    organizationId,
-  );
+export async function getInvoices(organizationId: number) {
+  return billingRepository.getInvoices(organizationId);
 }

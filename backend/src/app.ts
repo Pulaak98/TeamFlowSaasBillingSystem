@@ -5,9 +5,7 @@ import { notFound } from "./middlewares/not-found.js";
 import memberRoutes from "./routes/member.routes.js";
 import creditUsageRoutes from "./routes/credit-usage.routes.js";
 import billingRoutes from "./routes/billing.routes.js";
-
-
-
+import invoiceRoutes from "./routes/invoice.routes.js";
 
 const app = express();
 
@@ -17,6 +15,7 @@ app.use(express.json());
 app.use("/organizations", memberRoutes);
 app.use("/organizations", creditUsageRoutes);
 app.use("/organizations", billingRoutes);
+app.use("/organizations", invoiceRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
