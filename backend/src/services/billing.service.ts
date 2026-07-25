@@ -1,5 +1,6 @@
 import * as billingRepository from "../repositories/billing.repository.js";
 import { AppError } from "../utils/AppError.js";
+import { calculateInvoice } from "../utils/billing-calculator.js";
 
 function getDateParts(date: Date | string) {
   const parsedDate = new Date(date);
@@ -8,9 +9,6 @@ function getDateParts(date: Date | string) {
     throw new AppError("Invalid billing start date.", 400);
   }
 
-  // PostgreSQL DATE is being returned as a JS Date.
-  // Use local date parts so 2026-06-30T18:00:00.000Z
-  // becomes July 1 in Bangladesh/local timezone.
   return {
     year: parsedDate.getFullYear(),
     month: parsedDate.getMonth(),
@@ -42,26 +40,11 @@ export async function getUpcomingInvoice(organizationId: number) {
   const credits =
     await billingRepository.getCreditUsage(organizationId);
 
-  const extraMembers = Math.max(
-    0,
-    activeMembers - organization.included_members,
+  const invoice = calculateInvoice(
+    organization,
+    activeMembers,
+    credits,
   );
-
-  const extraCredits = Math.max(
-    0,
-    credits - organization.included_credits,
-  );
-
-  const extraMemberCost =
-    extraMembers * Number(organization.extra_member_price);
-
-  const extraCreditCost =
-    extraCredits * Number(organization.extra_credit_price);
-
-  const total =
-    Number(organization.base_price) +
-    extraMemberCost +
-    extraCreditCost;
 
   const {
     year,
@@ -75,7 +58,6 @@ export async function getUpcomingInvoice(organizationId: number) {
     day,
   );
 
-  // Last day of the billing month
   const endDate = new Date(
     year,
     month + 1,
@@ -95,37 +77,19 @@ export async function getUpcomingInvoice(organizationId: number) {
     billingPeriodStart,
     billingPeriodEnd,
 
+    // Keep these top-level fields because the frontend uses them.
     activeMembers,
     includedMembers: organization.included_members,
-
-    extraMembers,
 
     creditsUsed: credits,
     includedCredits: organization.included_credits,
 
-    extraCredits,
+    extraMembers: invoice.extraMembers,
+    extraCredits: invoice.extraCredits,
 
-    breakdown: {
-      basePrice: Number(organization.base_price),
+    breakdown: invoice.breakdown,
 
-      includedMembers: organization.included_members,
-      activeMembers,
-      extraMembers,
-      extraMemberPrice: Number(
-        organization.extra_member_price,
-      ),
-      extraMemberCost,
-
-      includedCredits: organization.included_credits,
-      creditsUsed: credits,
-      extraCredits,
-      extraCreditPrice: Number(
-        organization.extra_credit_price,
-      ),
-      extraCreditCost,
-    },
-
-    totalAmount: total,
+    totalAmount: invoice.totalAmount,
   };
 }
 

@@ -2,7 +2,7 @@ import * as billingRepository from "../repositories/billing.repository.js";
 import * as invoiceRepository from "../repositories/invoice.repository.js";
 import { AppError } from "../utils/AppError.js";
 
-import { calculateInvoice } from "./billing-calculator.js";
+import { calculateInvoice } from "../utils/billing-calculator.js";
 
 export async function generateInvoice(organizationId: number) {
   const organization = await billingRepository.getOrganization(organizationId);

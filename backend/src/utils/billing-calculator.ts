@@ -14,21 +14,20 @@ export function calculateInvoice(
     activeMembers - organization.included_members,
   );
 
-  const extraCredits = Math.max(
-    0,
-    creditsUsed - organization.included_credits,
-  );
+  const extraCredits = Math.max(0, creditsUsed - organization.included_credits);
 
   const extraMemberCost =
     extraMembers * Number(organization.extra_member_price);
 
+  // Extra credits are billed per 1,000-credit block.
+  // Partial blocks are rounded up.
+  const extraCreditUnits = Math.ceil(extraCredits / 1000);
+
   const extraCreditCost =
-    extraCredits * Number(organization.extra_credit_price);
+    extraCreditUnits * Number(organization.extra_credit_price);
 
   const totalAmount =
-    Number(organization.base_price) +
-    extraMemberCost +
-    extraCreditCost;
+    Number(organization.base_price) + extraMemberCost + extraCreditCost;
 
   const breakdown = {
     basePrice: Number(organization.base_price),
@@ -43,6 +42,7 @@ export function calculateInvoice(
     creditsUsed,
     extraCredits,
     extraCreditPrice: Number(organization.extra_credit_price),
+    extraCreditUnits,
     extraCreditCost,
   };
 

@@ -125,6 +125,40 @@ Built a simple Tailwind billing page at `/settings/billing`.
 * Used Tailwind for a simple, clean UI.
 * Member status remains managed through the backend/API; only `active` members count toward billing.
 
+## Phase 6 – Automated Tests
+
+Automated tests were added using Vitest.
+
+Tested
+Extra member charge calculation
+Extra credit charge calculation with round-up
+Full invoice calculation
+Duplicate referenceId rejection
+No overage when usage is within the included limits
+
+The Acme Inc. calculation is verified as:
+
+Base price       $99
+Member overage   $30
+Credit overage   $10
+--------------------
+Total            $139
+Run Tests
+
+From the backend directory:
+
+npm test
+
+Build check:
+
+npm run build
+
+Expected test result:
+
+Test Files  2 passed
+Tests       5 passed
+
+## Phase 7 Added Readme
 
 
 ## Running the Project
