@@ -5,3 +5,7 @@ export const createMemberSchema = z.object({
   email: z.email(),
   status: z.enum(["active", "inactive"]),
 });
+
+export const updateMemberStatusSchema = z.object({
+  status: z.enum(["active", "inactive"]),
+});

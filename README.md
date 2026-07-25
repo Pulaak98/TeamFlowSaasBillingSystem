@@ -98,22 +98,96 @@ Extra Member Charges +
 Extra Credit Charges
 
 
+
+## Phase 5 – Billing Page
+
+Built a simple Tailwind billing page at `/settings/billing`.
+
+### Implemented
+
+* Current plan and pricing
+* Included members and credits
+* Current billing period
+* Active member count
+* Credit usage
+* Upcoming invoice preview
+* Past invoices
+* Real API data
+* Loading and error states
+
+### Important Changes
+
+* Added `billing.service.ts` and billing API integration.
+* Added billing TypeScript types and reusable billing components.
+* Fixed PostgreSQL date/timezone handling so billing dates display correctly.
+* Fixed PostgreSQL numeric values being returned as strings when displaying invoice amounts.
+* Added invoice breakdown showing base price, extra member cost, and extra credit cost.
+* Used Tailwind for a simple, clean UI.
+* Member status remains managed through the backend/API; only `active` members count toward billing.
+
+
+
 ## Running the Project
 
-### Database
+Run the Project with Docker
+1. Start everything
 
-The PostgreSQL database runs from the project **root directory** using Docker.
+From the project root:
 
-```bash
-docker compose up -d
-```
+docker compose up --build
 
-### Backend
+This starts:
 
-at the moment The backend runs from the **backend** directory.(will docker soon)
+PostgreSQL → localhost:5432
+Backend → localhost:5000
+Frontend → localhost:5173
+2. Open the application
 
-```bash
-npm run dev
-```
+Frontend:
 
-> **Note:** Make sure the PostgreSQL Docker container is running before starting the backend.
+http://localhost:5173
+
+Billing page:
+
+http://localhost:5173/settings/billing
+
+Backend API example:
+
+http://localhost:5000/organizations/1/billing/upcoming-invoice
+Stop the Project
+docker compose down
+
+To start again without rebuilding:
+
+docker compose up
+
+Rebuild after code/Dockerfile changes:
+
+docker compose up --build
+
+Do not use docker compose down -v unless you intentionally want to delete the PostgreSQL volume and database data.
+
+Environment
+
+The frontend uses:
+
+VITE_API_URL=http://localhost:5000
+
+Inside Docker, the backend connects to PostgreSQL using:
+
+DB_HOST=postgres
+DB_PORT=5432
+DB_NAME=teamflow_billing
+DB_USER=postgres
+DB_PASSWORD=postgres
+Database
+
+PostgreSQL runs at the project root using Docker.
+
+Database initialization is provided by:
+
+database/init.sql
+
+The database is persisted through the Docker volume:
+
+postgres_data

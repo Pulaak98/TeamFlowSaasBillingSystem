@@ -38,3 +38,27 @@ export async function createMember(
     next(error);
   }
 }
+
+export async function updateMemberStatus(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const organizationId = Number(req.params.organizationId);
+    const memberId = Number(req.params.memberId);
+
+    const member = await memberService.updateMemberStatus(
+      organizationId,
+      memberId,
+      req.body.status,
+    );
+
+    res.json({
+      success: true,
+      data: member,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
